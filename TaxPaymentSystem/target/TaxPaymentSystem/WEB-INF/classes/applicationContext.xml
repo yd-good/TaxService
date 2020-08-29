@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:property-placeholder location="classpath:db.properties"/>
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="jdbcUrl" value="${jdbcUrl}"></property>
+        <property name="driverClass" value="${driverClass}"></property>
+        <property name="user" value="${user}"></property>
+        <property name="password" value="${password}"></property>
+        <property name="initialPoolSize" value="${initialPoolSize}"></property>
+        <property name="minPoolSize" value="${minPoolSize}"></property>
+        <property name="maxPoolSize" value="${maxPoolSize}"></property>
+<!--        最大空间时间，当1800秒后没操作者抛弃-->
+        <property name="maxIdleTime" value="1800"></property>
+<!--        获取增量，当被连接不够时一次性获取3个-->
+        <property name="acquireIncrement" value="3"></property>
+    </bean>
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"><!--本地会话工厂bean-->
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+            </props>
+        </property>
+<!--        hibernate映射文件的地址-->
+        <property name="mappingLocations">
+            <list>
+               <value>classpath:taxServices/user/entity/User.hbm.xml</value>
+               <value>classpath:taxServices/role/entity/RolePrivilege.hbm.xml</value>
+               <value>classpath:taxServices/role/entity/Role.hbm.xml</value>
+               <value>classpath:taxServices/user/entity/UserRole.hbm.xml</value>
+               <value>classpath:taxServices/info/entity/Info.hbm.xml</value>
+               <value>classpath:taxServices/complaint/entity/Complain.hbm.xml</value>
+               <value>classpath:taxServices/complaint/entity/ComplainReply.hbm.xml</value>
+            </list>
+        </property>
+    </bean>
+<!--    事务管理-->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+<!--    事务通知-->
+    <tx:advice transaction-manager="transactionManager" id="txAdvice">
+        <tx:attributes>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="list*" read-only="true"/>
+<!--            除了这些只读方法，其他的必须回滚-->
+            <tx:method name="*" rollback-for="Throwable"/>
+        </tx:attributes>
+    </tx:advice>
+<!--    aop配置事务控制-->
+    <aop:config>
+<!--        扫描以service结尾的bean-->
+        <aop:pointcut id="serviceOperation" expression="bean(*Service)"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation"></aop:advisor>
+    </aop:config>
+    <bean id="baseDao" abstract="true">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    <bean id="permissionCheck" class="yd.itcast.core.utils.PermissionCheck"></bean>
+    <import resource="classpath:taxServices/*/config/*-spring.xml"></import>
+    <import resource="classpath:taxServices/*/conf/*-spring.xml"></import>
+</beans>

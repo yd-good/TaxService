@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+<!--    动态方法调用（Dynamic Method Invocation,DMI）是指表单元素的Action并不是直接等于某个Action的名称，而是通过-->
+<!--    在Action的名称中使用感叹号（！）来标识要调用的方法名称，格式为actionName！ methodName.action。-->
+<!--    但是由于动态方法的调用可能会带来安全隐患（通过URL可以执行Action中的任意方法），所以在确定使用动态方法调用时，-->
+<!--    应该确保Action中的所有方法都是普通的，开放的方法。基于这个属性Struts2提供一个属性的配置用于禁止调用动态方法。-->
+<!--    我们可以在Struts.xml文件中，通过constant元素将属性struts.enable.DynamicMethodInvocation设置为false。-->
+<!--    禁用动态方法访问-->
+<!--   <constant name="struts.enable.DynamicMethodInvocation" value="false"></constant>-->
+<!--   配置拓展名为action-->
+    <constant name="struts.action.extension" value="action"></constant>
+
+<!--    当struts的配置文件修改后，系统是否自动重新加载该文件，其中默认值为false，在开发阶段最好true-->
+<!--    1、启用了开发模式，可以输出日志记录，便于程序设计。-->
+<!--    2、启动开发模式以后，你在struts.xml配置文件中修改后就不用重新部署项目了。-->
+<!--    3、开发模式下设为true，这样可以打印出更详细的错误信息-->
+    <!--    配置成开发模式-->
+    <constant name="struts.devMode" value="true"></constant>
+<!--    把主题配置成simple-->
+    <constant name="struts.ui.theme" value="simple"></constant>
+
+<!--    配置全局异常以及映射-->
+    <package name="GlobalException" extends="struts-default">
+<!--        全局映射跳转结果-->
+<!--        <global-results>-->
+<!--            <result name="myException">/WEB-INF/exceptionPage/error.jsp</result>-->
+<!--            <result name="input">/WEB-INF/exceptionPage/error.jsp</result>-->
+<!--        </global-results>-->
+<!--        全局异常映射-->
+<!--        <global-exception-mappings>-->
+<!--           <exception-mapping exception="yd.itcast.core.exception.MyException" result="myException"></exception-mapping>-->
+<!--           <exception-mapping exception="java.lang.Exception" result="input"></exception-mapping>-->
+<!--       </global-exception-mappings>-->
+
+    </package>
+    
+    <include file="taxServices/user/config/user-struts.xml"></include>
+    <include file="taxServices/role/config/role-struts.xml"></include>
+    <include file="baseHome/config/home_struts.xml"></include>
+    <include file="taxServices/home/config/sysHome-struts.xml"></include>
+    <include file="login/config/login-struts.xml"></include>
+    <include file="taxServices/info/config/info-struts.xml"></include>
+    <include file="taxServices/complaint/conf/complain-struts.xml"></include>
+</struts>

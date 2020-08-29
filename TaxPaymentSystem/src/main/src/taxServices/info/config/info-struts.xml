@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+    <package name="info-action" namespace="/taxService" extends="GlobalException"  strict-method-invocation="false">
+       <action name="info_*" class="taxServices.info.action.InfoAction" method="{1}">
+           <result name="{1}">/WEB-INF/taxService/info/{1}.jsp</result>
+           <result name="list" type="redirectAction">
+               <param name="actionName">info_listUI.action</param>
+<!--              将title作为参数传输-->
+               <param name="info.title">${info.title}</param>
+               <param name="currentPageNo">${currentPageNo}</param>
+           </result>
+       </action>
+    </package>
+</struts>
