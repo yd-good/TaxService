@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+    <package name="login-struts" extends="struts-default" namespace="/sys" strict-method-invocation="false">
+        <action name="login_*" method="{1}" class="login.action.LoginAction">
+            <result name="loginUI">/WEB-INF/login/loginUI.jsp</result>
+            <result name="home" type="redirectAction">
+                <param name="actionName">home</param>
+<!--                因为是同一个命令空间sys，所以可以不写nameSpace-->
+                <param name="nameSpace">/sys</param>
+            </result>
+            <result name="{1}">/WEB-INF/login/{1}.jsp</result>
+        </action>
+    </package>
+</struts>
